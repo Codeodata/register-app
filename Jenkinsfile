@@ -13,7 +13,7 @@ pipeline {
 
         stage("Checkout from SCM"){
                 steps {
-                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/Ashfaque-9x/register-app'
+                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/Agon13/register-app'
                 }
         }
 
@@ -33,7 +33,7 @@ pipeline {
        stage("SonarQube Analysis"){
            steps {
 	        script {
-		        withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') { 
+		        withSonarQubeEnv(credentialsId: 'jenkins-sonar-token') { 
                         sh "mvn sonar:sonar"
 		        }
 	           }	
