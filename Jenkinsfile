@@ -54,11 +54,10 @@ pipeline {
          		def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
             
             // Tag the image correctly with the full name
-           		 sh "docker tag ${IMAGE_TAG} ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
+            		sh "docker push ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
 
-            // Push the image to Docker Hub
-           		 sh "docker push ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
-           		 sh "docker push ${DOCKER_USER}/${APP_NAME}:latest"
+            // Optional Tag latest
+           		// sh "docker tag ${DOCKER_USER}/${APP_NAME}:latest"
 
 	           }
            }
