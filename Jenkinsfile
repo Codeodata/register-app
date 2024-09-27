@@ -50,6 +50,19 @@ pipeline {
        stage("Build & Push Docker Image"){
            steps {
 	        script {
+	// Log in to Docker Hub using environment variables
+           		 sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+            
+            // Build the Docker image
+         		def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+            
+            // Tag the image correctly with the full name
+           		 sh "docker tag ${IMAGE_TAG} ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
+
+            // Push the image to Docker Hub
+           		 sh "docker push ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
+           		 sh "docker push ${DOCKER_USER}/${APP_NAME}:latest"
+
 		        docker.withRegistry('',DOCKER_PASS) { 
                         	docker_image = docker.build ("${IMAGE_TAG}")
 		        }
