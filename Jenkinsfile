@@ -8,7 +8,7 @@ pipeline {
 	    APP_NAME = "register-app-pipeline"
             RELEASE = "1.0.0"
             DOCKER_USER = "agon13"
-            DOCKER_PASS = 'dockerhub'
+            DOCKER_PASS = credentials('dockerhub')
             IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
             IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -63,14 +63,6 @@ pipeline {
            		 sh "docker push ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
            		 sh "docker push ${DOCKER_USER}/${APP_NAME}:latest"
 
-		        docker.withRegistry('',DOCKER_PASS) { 
-                        	docker_image = docker.build ("${IMAGE_TAG}")
-		        }
-	           }
-	        script {
-		        docker.withRegistry('',DOCKER_PASS) { 
-                        	docker_image.push("${IMAGE_TAG}")
-		        }
 	           }
            }
        }
