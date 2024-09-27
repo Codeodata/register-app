@@ -52,6 +52,10 @@ pipeline {
 	        script {
             // Build the Docker image
          		def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+			
+			docker.withRegistry('', 'dockerhub') {
+
+			
             
             // Tag the image correctly with the full name
             		sh "docker push ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
@@ -63,5 +67,6 @@ pipeline {
            }
        }
     } 
+  }
 }
 
