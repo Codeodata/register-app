@@ -50,9 +50,6 @@ pipeline {
        stage("Build & Push Docker Image"){
            steps {
 	        script {
-	// Log in to Docker Hub using environment variables
-           		 sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
-            
             // Build the Docker image
          		def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
             
