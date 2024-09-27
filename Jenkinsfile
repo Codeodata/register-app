@@ -5,83 +5,81 @@ pipeline {
         maven 'Maven3'
     }
     environment {
-	    APP_NAME = "register-app-pipeline"
-            RELEASE = "1.0.0"
-            DOCKER_USER = "agon13"
-            DOCKER_PASS = 'dockerhub'
-            IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-            IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        APP_NAME = "register-app-pipeline"
+        RELEASE = "1.0.0"
+        DOCKER_USER = "agon13"
+        DOCKER_PASS = 'dockerhub'
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
-    stages{
-        stage("Cleanup Workspace"){
-                steps {
+    stages {
+        stage("Cleanup Workspace") {
+            steps {
                 cleanWs()
-                }
+            }
         }
 
-        stage("Checkout from SCM"){
-                steps {
-                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/Codeodata/register-app'
-                }
+        stage("Checkout from SCM") {
+            steps {
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/Codeodata/register-app'
+            }
         }
 
-        stage("Build Application"){
+        stage("Build Application") {
             steps {
                 sh "mvn clean package"
             }
+        }
 
-       }
+        stage("Test Application") {
+            steps {
+                sh "mvn test"
+            }
+        }
 
-       stage("Test Application"){
-           steps {
-                 sh "mvn test"
-           }
-       }
-
-       stage("SonarQube Analysis"){
-           steps {
-	        script {
-		        withSonarQubeEnv(credentialsId: 'jenkins-sonar-token') { 
+        stage("SonarQube Analysis") {
+            steps {
+                script {
+                    withSonarQubeEnv(credentialsId: 'jenkins-sonar-token') {
                         sh "mvn sonar:sonar"
-		        }
-	           }	
-           }
-       }
-       stage("Build & Push Docker Image"){
-           steps {
-	        script {
-            // Build the Docker image
-         		def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
-			
-			docker.withRegistry('', 'dockerhub') {
+                    }
+                }
+            }
+        }
 
-			
-            
-            // Tag the image correctly with the full name
-            		sh "docker push ${DOCKER_USER}/${APP_NAME}:${IMAGE_TAG}"
+        stage("Build & Push Docker Image") {
+            steps {
+                script {
+                    // Build the Docker image
+                    def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
 
-            // Optional Tag latest
-           		// sh "docker tag ${DOCKER_USER}/${APP_NAME}:latest"
+                    docker.withRegistry('', 'dockerhub') {
+                        // Push the image to Docker Hub
+                        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
 
-	           }
-           }
-       }
-       stage("Trivy Scan") {
-           steps {
-               script {
-			sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image agon13/register-app-pipeline:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
-               }
-           }
-       }
-       stage ('Cleanup Artifacts') {
-           steps {
-               script {
-		       sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-        	//	sh "docker rmi ${IMAGE_NAME}:latest"
-               }
-          }
-       }        
-    } 
-  }
+                        // Optional: Tag the image as latest
+                        // sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
+                    }
+                }
+            }
+        }
+
+        stage("Trivy Scan") {
+            steps {
+                script {
+                    sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${IMAGE_NAME}:${IMAGE_TAG} --no-progress --scanners vuln --exit-code 0 --severity HIGH,CRITICAL --format table')
+                }
+            }
+        }
+
+        stage("Cleanup Artifacts") {
+            steps {
+                script {
+                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+                    // Optional: Remove the latest tag if used
+                    // sh "docker rmi ${IMAGE_NAME}:latest"
+                }
+            }
+        }
+    }
 }
-
