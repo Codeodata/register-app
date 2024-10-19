@@ -10,7 +10,7 @@ pipeline {
         APP_NAME = "pipeline"
         RELEASE = "1.0.0"
         DOCKER_USER = "agon13"
-        DOCKER_PASS = 'docker-hub-token'
+        DOCKER_PASS = 'token-hub'
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -46,7 +46,7 @@ pipeline {
                     // Build the Docker image
                     def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
 
-                    docker.withRegistry('', 'docker-hub-token') {
+                    docker.withRegistry('', 'token-hub') {
                         // Push the image to Docker Hub
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     }
