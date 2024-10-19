@@ -39,20 +39,23 @@ pipeline {
                 sh "mvn test"
             }
         }
+
         stage("Build & Push Docker Image") {
             steps {
                 script {
-                    // Build the Docker image
-                    def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image = docker.build "${IMAGE_NAME}"
+                    }
 
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                        // Push the image to Docker Hub
-                        docker_image.push()
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push('latest')
                     }
                 }
             }
-        }
 
+       }
+        
         stage("Trivy Scan") {
             steps {
                 script {
