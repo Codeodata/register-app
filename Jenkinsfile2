@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        APP_NAME = "register-app-on-premise"
+        APP_NAME = "pipeline"
         RELEASE = "1.0.0"
         DOCKER_USER = "agon13"
         DOCKER_PASS = 'docker-hub-token'
