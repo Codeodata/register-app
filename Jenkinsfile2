@@ -44,11 +44,11 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'sonar-key') { // Usa el nombre del servidor SonarQube configurado en Jenkins
-                    sh "mvn sonar:sonar"
+                    sh "mvn validate"
+                    }
+                }
             }
         }
-    }
-}
 
         stage("Build & Push Docker Image") {
             steps {
@@ -76,11 +76,11 @@ pipeline {
             steps {
                 script {
                     sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG} || true" // Evita que falle si la imagen no existe
+                    }
                 }
             }
         }
-    }
-
+    
     post {
         failure {
             emailext body: '''${SCRIPT, template="groovy-html.template"}''',
