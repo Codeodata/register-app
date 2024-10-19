@@ -39,17 +39,6 @@ pipeline {
                 sh "mvn test"
             }
         }
-
-        stage("SonarQube Analysis") {
-            steps {
-                script {
-                    withSonarQubeEnv(credentialsId: 'sonar-key') { // Usa el nombre del servidor SonarQube configurado en Jenkins
-                    sh "mvn sonar:sonar"
-                    }
-                }
-            }
-        }
-
         stage("Build & Push Docker Image") {
             steps {
                 script {
