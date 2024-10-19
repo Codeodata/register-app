@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'token-sonar') {
-                        sh "mvn sonar:sonar -Dsonar.login=${DOCKER_PASS} -Dsonar.host.url=http://<tu-sonarqube-host>:9000"
+                        sh "mvn sonar:sonar -Dsonar.login=${DOCKER_PASS} -Dsonar.host.url=http://192.168.182.135:9000"
                     }
                 }
             }
