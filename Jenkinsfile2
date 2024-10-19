@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'sonar-key') { // Usa el nombre del servidor SonarQube configurado en Jenkins
-                    sh "mvn validate"
+                    sh "mvn sonar:sonar"
                     }
                 }
             }
