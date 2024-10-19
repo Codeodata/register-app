@@ -43,7 +43,7 @@ pipeline {
         stage("SonarQube Analysis") {
             steps {
                 script {
-                    withSonarQubeEnv(credentialsId: 'sonar-key') {
+                    withSonarQubeEnv(credentialsId: 'token-sonar') {
                         sh "mvn sonar:sonar -Dsonar.login=${DOCKER_PASS} -Dsonar.host.url=http://<tu-sonarqube-host>:9000"
                     }
                 }
