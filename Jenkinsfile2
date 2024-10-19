@@ -43,7 +43,7 @@ pipeline {
         stage("SonarQube Analysis") {
             steps {
                 script {
-                    withSonarQubeEnv(credentialsId: 'token-sonar') {
+                    withSonarQubeEnv('sonar-token') { // Usar el token correcto de SonarQube
                         sh "mvn sonar:sonar -Dsonar.login=${DOCKER_PASS} -Dsonar.host.url=http://192.168.182.135:9000"
                     }
                 }
