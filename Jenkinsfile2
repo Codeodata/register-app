@@ -1,11 +1,11 @@
 pipeline {
     agent any // Permite que el pipeline se ejecute en cualquier agente disponible.
-    
+
     tools {
         jdk 'Java17'
         maven 'Maven3'
     }
-    
+
     environment {
         APP_NAME = "register-app-pipeline"
         RELEASE = "1.0.0"
@@ -14,11 +14,11 @@ pipeline {
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
-    
+
     stages {
         stage("Cleanup Workspace") {
             steps {
-                cleanWs()
+                cleanWs() // Limpia el espacio de trabajo.
             }
         }
 
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv(credentialsId: 'sonar-key') {
-                        sh "mvn sonar:sonar -Dsonar.login=${env.DOCKER_PASS} -Dsonar.host.url=http://<tu-sonarqube-host>:9000"
+                        sh "mvn sonar:sonar -Dsonar.login=${DOCKER_PASS} -Dsonar.host.url=http://<tu-sonarqube-host>:9000"
                     }
                 }
             }
@@ -56,9 +56,9 @@ pipeline {
                     // Build the Docker image
                     def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
 
-                    docker.withRegistry('', 'dockerhub') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
                         // Push the image to Docker Hub
-                        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                        docker_image.push()
                     }
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
         stage("Trivy Scan") {
             steps {
                 script {
-                    sh 'docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${IMAGE_NAME}:${IMAGE_TAG} --no-progress --scanners vuln --exit-code 0 --severity HIGH,CRITICAL --format table'
+                    sh "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${IMAGE_NAME}:${IMAGE_TAG} --no-progress --scanners vuln --exit-code 0 --severity HIGH,CRITICAL --format table"
                 }
             }
         }
@@ -75,23 +75,24 @@ pipeline {
         stage("Cleanup Artifacts") {
             steps {
                 script {
-                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG} || true" // Evita que falle si la imagen no existe
                 }
             }
         }
     }
-}
 
     post {
-       failure {
-             emailext body: '''${SCRIPT, template="groovy-html.template"}''', 
-                      subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed", 
-                      mimeType: 'text/html',to: "ivanagustingonzalez@gmail.com"
-      }
-      success {
-            emailext body: '''${SCRIPT, template="groovy-html.template"}''', 
-                     subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful", 
-                     mimeType: 'text/html',to: "ivanagustingonzalez@gmail.com"
-      }      
-   }
+        failure {
+            emailext body: '''${SCRIPT, template="groovy-html.template"}''',
+                     subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Failed",
+                     mimeType: 'text/html',
+                     to: "ivanagustingonzalez@gmail.com"
+        }
+        success {
+            emailext body: '''${SCRIPT, template="groovy-html.template"}''',
+                     subject: "${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - Successful",
+                     mimeType: 'text/html',
+                     to: "ivanagustingonzalez@gmail.com"
+        }
+    }
 }
