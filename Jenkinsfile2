@@ -43,12 +43,12 @@ pipeline {
         stage("SonarQube Analysis") {
             steps {
                 script {
-                    withSonarQubeEnv(credentialsId: 'sonar-key') { 
-                        sh "mvn sonar:sonar"
-                    }
-                }
+                    withSonarQubeEnv('credentialsId:sonar-key') { // Usa el nombre del servidor SonarQube configurado en Jenkins
+                    sh "mvn sonar:sonar -Dsonar.host.url=http://192.168.182.135:9000"
             }
         }
+    }
+}
 
         stage("Build & Push Docker Image") {
             steps {
