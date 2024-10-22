@@ -53,7 +53,7 @@ pipeline {
                     // Build the Docker image
                     def docker_image = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
 
-                    docker.withRegistry('', 'dockerhub') {
+                    docker.withRegistry('', 'token-hub') {
                         // Push the image to Docker Hub
                         sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
 
