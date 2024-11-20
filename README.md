@@ -1,5 +1,8 @@
 # **Jenkins and SonarQube Setup Guide**
 
+![Uploading pin01-01.jpg…]()
+
+
 Este proyecto muestra cómo instalar y configurar Jenkins y SonarQube para crear un entorno DevOps funcional. A continuación, un resumen de los pasos principales:
 
 ---
