@@ -1,4 +1,51 @@
+# **Jenkins and SonarQube Setup Guide**
 
+Este proyecto muestra cómo instalar y configurar Jenkins y SonarQube para crear un entorno DevOps funcional. A continuación, un resumen de los pasos principales:
+
+---
+
+## **1. Configuración de Jenkins**
+
+### **Instalación**
+1. **Instalar Java 17**: Necesario para ejecutar Jenkins.  
+2. **Instalar Jenkins**: Usar los paquetes oficiales y habilitar el servicio.  
+
+### **Configuración**
+1. Configurar nodos: Añadir un agente (servidor secundario) para distribuir las tareas.  
+2. Instalar plugins importantes: Maven, Java y GitHub.  
+3. Configurar herramientas como Maven y JDK desde **Manage Jenkins > Global Tool Configuration**.  
+4. Añadir credenciales de GitHub para que Jenkins pueda interactuar con tus repositorios.  
+
+---
+
+## **2. Configuración de SonarQube**
+
+### **Instalación**
+1. **Instalar PostgreSQL**: Base de datos necesaria para SonarQube.  
+2. **Instalar Java 17**: Necesario para ejecutar SonarQube.  
+3. **Optimizar recursos**: Ajustar configuraciones del sistema para que SonarQube funcione eficientemente.  
+
+### **Configuración**
+1. Configurar base de datos en el archivo `sonar.properties`.  
+2. Crear un servicio para que SonarQube se inicie automáticamente.  
+3. Verificar que SonarQube esté corriendo en `http://<IP>:9000`.  
+
+---
+
+## **3. Integración Jenkins-SonarQube**
+
+1. **Instalar plugins**: Instalar los plugins de SonarQube en Jenkins.  
+2. **Configurar servidor de SonarQube** en Jenkins con la URL y un token de autenticación.  
+3. **Añadir SonarQube Scanner** como herramienta en Jenkins.  
+
+---
+
+## **¿Qué implementamos?**
+- **Automatización**: Jenkins distribuye tareas y ejecuta pipelines.  
+- **Calidad del código**: SonarQube analiza tu código y asegura que cumpla con estándares de calidad.  
+- **Colaboración eficiente**: Ambas herramientas se integran para facilitar el desarrollo y la implementación.  
+
+--
 
 
 Video Link -- https://youtu.be/e42hIYkvxoQ
