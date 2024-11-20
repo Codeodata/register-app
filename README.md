@@ -6,6 +6,7 @@ Video Link -- https://youtu.be/e42hIYkvxoQ
 
 ## Install and Configure the Jenkins-Master & Jenkins-Agent
 =============================================================
+
 ## Install Java
 $ sudo apt update
 $ sudo apt upgrade
@@ -15,14 +16,17 @@ $ sudo apt install openjdk-17-jre
 $ java -version
 
 ## Install Jenkins
+
 Refer--https://www.jenkins.io/doc/book/installing/linux/
-curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee \
+
+$ curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee \
   /usr/share/keyrings/jenkins-keyring.asc > /dev/null
-echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
   https://pkg.jenkins.io/debian binary/ | sudo tee \
   /etc/apt/sources.list.d/jenkins.list > /dev/null
-sudo apt-get update
-sudo apt-get install jenkins
+
+$ sudo apt-get update
+$ sudo apt-get install jenkins
 
 $ sudo systemctl enable jenkins       //Enable the Jenkins service to start at boot
 $ sudo systemctl start jenkins        //Start Jenkins as a service
@@ -30,28 +34,26 @@ $ systemctl status jenkins
 
 
 $ sudo nano /etc/ssh/sshd_config   //Habilitar PubkeyAuthentication yes y 
-							//Habilitar AuthorizedKeyFile (en ambos)
+				   //Habilitar AuthorizedKeyFile (en ambos)
 
 				// En Jenkins-Master genero una clave publica. ssh-keygen
-					// copio el contenido de la clave pública
+			        // copio el contenido de la clave pública
 				// En Jenkins-Agent en /.shh/authorized_keys pego la clave
 
 $ sudo service sshd reload
 $ ssh-keygen OR $ ssh-keygen -t ed25519
 $ cd .ssh
 
-// Dentro de Jenkins-Master, voy a Nodes, Built-in-Node, Configure, Number of Executors:0 
-		// Creo un nuevo Nodo llamado Jenkins-Agent,
-				// Number of Executors:2,
-				// Remote root directory: /home/ubuntu
-				// Launch method: Launch Agents via SSH
-				 // Host: es Private IPv4adresses Jenkins-Agent (ambos estan en la misma vpc)
-				 //Agrego una credencial Global
+                                // Dentro de Jenkins-Master, voy a Nodes, Built-in-Node, Configure, Number of Executors:0 
+		                // Creo un nuevo Nodo llamado Jenkins-Agent,
+			        // Number of Executors:2,
+			        // Host: es Private IPv4adresses Jenkins-Agent (ambos estan en la misma vpc)
+				// Agrego una credencial Global
 					 Kind SSH Username with private key
 					 ID: Jenkins-Agent
 					 Username: ubuntu
 					 Private Key: Enter directly // pego la clave privada.
-				//Host Key file Verification Strategy: Non Verifying Verification Strategy.
+				// Host Key file Verification Strategy: Non Verifying Verification Strategy.
 					 
 // Instalar Plugins necesarios: Maven Integration, Pipeline Maven Integration, Eclipse Temurin Installer.
 
